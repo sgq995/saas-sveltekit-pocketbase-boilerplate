@@ -1,6 +1,7 @@
 # Project
 pocketbase.zip
 /pocketbase/*
+!/pocketbase/pb_hooks
 !/pocketbase/pb_migrations
 
 # Svelte
