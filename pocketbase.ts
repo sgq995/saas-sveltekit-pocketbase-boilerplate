@@ -1,11 +1,26 @@
 import { spawn, spawnSync } from 'node:child_process';
 import { createWriteStream, existsSync, mkdirSync, unlinkSync } from 'node:fs';
 import { get } from 'node:https';
+import { arch, platform } from 'node:os';
 import { join } from 'node:path';
 
+const OS_MAP: Record<string, string> = {
+	linux: 'linux',
+	darwin: 'darwin',
+	win32: 'windows'
+};
+
+const ARCH_MAP: Record<string, string> = {
+	arm: 'arm64',
+	arm64: 'arm64',
+	x64: 'amd64'
+};
+
 const ROOT = __dirname;
-const URL =
-	'https://github.com/pocketbase/pocketbase/releases/download/v0.20.1/pocketbase_0.20.1_linux_amd64.zip';
+const VERSION = '0.20.6';
+const OS = OS_MAP[platform()] || 'unknown';
+const ARCH = ARCH_MAP[arch()] || 'unknown';
+const URL = `https://github.com/pocketbase/pocketbase/releases/download/v${VERSION}/pocketbase_${VERSION}_${OS}_${ARCH}.zip`;
 const FILEPATH = join(ROOT, 'pocketbase.zip');
 
 const POCKETBASE_ROOT = join(ROOT, 'pocketbase');
@@ -40,7 +55,7 @@ function download(url: string, filepath: string, success: () => void) {
 }
 
 function start() {
-	if (!existsSync(POCKETBASE_ROOT)) {
+	if (!existsSync(POCKETBASE_BIN)) {
 		spawnSync('unzip', ['pocketbase.zip', '-d', 'pocketbase'], { stdio: 'inherit' });
 	}
 
